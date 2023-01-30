@@ -1,0 +1,59 @@
+extends ../layout/admin
+block styles
+    meta(name="csrf-token" content= csrfToken)
+block contenido
+     div.py-10
+        h1.text-4xl.my-10.font-extrabold.text-center Bienes
+            span.font-normal Raices
+        h2.text-center.text-2xl.font-extrabold= pagina
+        a(href="/propiedades/crear" class="py-2 bg-indigo-600 hover:bg-indigo-400 rounded text-white text-sm px-10 font-bold text-center uppercase my-5 inline-block w-full sm:w-auto" ) Publicar Propiedad
+
+        //-pre= JSON.stringify(propiedades, undefined,2)
+        if propiedades.length
+            div(class="bg-white shadow rounded-lg")
+                ul(class="divide-y divide-gray-200")
+                    each propiedad in propiedades
+                        li 
+                            div(class="p-6 w-full flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-8 md:space-y-0 gap-4")
+                                div(class="sm:w-1/4 md:w-1/6") 
+                                    img(src=`/uploads/${propiedad.imagen}` alt=`Imagen Propiedad ${propiedad.titulo}` class="w-full block")
+
+                                div(class="sm:w-2/4 md:w-3/6 lg:w-4/6 space-y-3") 
+                                    a(class="block text-2xl font-extrabold text-indigo-600 truncate" href=`/propiedad/${propiedad.id}`)= propiedad.titulo
+                                    p(class="text-sm text-black font-bold")= propiedad.categoria.nombre
+
+                                    p(class="text-sm text-gray-500 font-bold flex items-center") 
+                                        svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6")
+                                            path(stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z")
+                                        = propiedad.precio.nombre
+                                    a(href=`/mensajes/${propiedad.id}` class="text-sm text-gray-600")= `${propiedad.mensajes.lenght} Mensajes`
+                                        
+
+                                div(class="sm:w-1/4 md:w-2/6 lg:w-1/6 flex flex-col gap-2 2xl:flex-row") 
+                                    
+                                    button(type="button" data-propiedad-id=`${propiedad.id}` class=`cambiar-estado w-full px-2 py-2 md:py-1 text-xs leading-5 font-semibold rounded cursor-pointer ${propiedad.publicado ? 'bg-green-100 text-green-800':'bg-yellow-100 text-red-800'} `)= `${propiedad.publicado ? 'Publicado':'No Publicado'}`
+                                    a(href=`/propiedades/editar/${propiedad.id}` class="text-center px-2 py-2 md:py-1 text-xs leading-5 font-semibold rounded cursor-pointer bg-indigo-100 text-indigo-800") Editar
+
+                                    form(method="POST" action=`/propiedades/eliminar/${propiedad.id}`)
+                                        input(type="hidden" name="_csrf" value= csrfToken)
+                                        input(type="submit" class=`w-full px-2 py-2 md:py-1 text-xs leading-5 font-semibold rounded cursor-pointer bg-red-100 text-red-800 ` value="Eliminar")
+                div(class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6")
+
+                    div(class="flex-1 flex justify-between sm:hidden")
+                        a(href=`/mis-propiedades?pagina=${paginaActual - 1}` class=`${paginaActual === "1" ? "pointer-events-none":""} relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm fotn-medium rounded-md text-gray-700 bg-white hover: bg-gray-50`) Anterior
+                        a(href=`/mis-propiedades?pagina=${paginaActual + 1}` class=`${paginaActual === paginas ? "pointer-events-none":""} relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm fotn-medium rounded-md text-gray-700 bg-white hover: bg-gray-50`) Siguiente
+                    div(class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between")
+                        p(class="text-sm text-gray-700 gap-2") Mostrando
+                            span(class="font-medium") #{offset + 1} a
+                            span(class="font-medium") #{total < limit + offset ? total : limat + offset} de
+                            span(class="font-medium") #{total} resultados
+                    div(class="hidden sm:block ") 
+                        nav(class="relative z-0 inline-flex rounded-md shadow-md")
+                            - var n = 1;
+                                while n <= paginas
+                                    a(href=`/mis-propiedades?pagina=${n}` class=`${paginaActual == n ? "bg-indigo-50 border-indigo-500 text-indigo-600" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"} relative inline-flex items-center px-4 py-2 border text-sm font-medium`) link#{n++}
+        else 
+            p.text-center No hay propiedades
+    
+block scripts
+    script(src="/js/cambiarEstado.js")

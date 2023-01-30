@@ -1,0 +1,28 @@
+extends ./layout/app
+
+
+
+block contenido
+
+
+    
+    section(class="py-5")
+        h2(class="text-center text-4xl font-extrabold pt-10")= pagina
+
+        if propiedades.lenght
+           div(class="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-14")
+            each departamento in propiedades
+                div(class="bg-white shadow rounded-lg")
+                    img(class="object-cover h-72 w-full" src=`/uploads/${departamento.imagen}` alt="imagen departamento")
+                    div(class="p-5 space-y-3")
+                        h3(class="text-2xl font-bold")= departamento.titulo
+                        p(class="text-sm text-gray-600") Habitaciones: 
+                            span(class="text-gay-800 font-bold")= departamento.habitaciones
+                        p(class="text-sm text-gray-600") Baños: 
+                            span(class="text-gay-800 font-bold")= departamento.wc
+                        p(class="text-sm text-gray-600") Precio: 
+                            span(class="text-gay-800 font-bold")= departamento.precio
+                        a(href=`/propiedad/${casa.id}` class="bg-indigo-600 w-full text-center block font-bold text-white p-2 uppercase rounded") Ver Propiedad
+        else
+            p(class="text-center text-gray-800 text-sm py-10") No hay resultados
+
